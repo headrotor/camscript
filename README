@@ -1,2 +1,5 @@
-COde to produce timelapse videos from a camera using gphoto2 and ffmpeg
-more details at http://rotormind.com/blog/2012/Mission-sunset-timelapses/
+Code to produce timelapse videos from a camera using gphoto2 and ffmpeg.
+
+More details at http://rotormind.com/blog/2012/Mission-sunset-timelapses/
+
+Beautiful videos produced by this tooling: https://blip.tv/the-rotor-show
