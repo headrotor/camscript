@@ -1,9 +1,45 @@
+
 #!/usr/bin/python
 
 import sys
 import os
 import time
 import subprocess
+
+# first wait for 1 hour before sunset.
+#Calculate sunset
+import ephem
+from datetime import datetime, timedelta
+import time
+o=ephem.Observer()
+o.lat='37.7749'
+o.long='-122.4194'
+s=ephem.Sun()
+#s=ephem.Moon()
+s.compute()
+print "next sunrise"
+print ephem.localtime(o.next_rising(s)).ctime()
+
+
+# convert sunset time to datetime
+sunset_ctime = ephem.localtime(o.next_setting(s)).ctime()
+sunset_dtime = datetime.strptime(sunset_ctime, "%a %b %d %H:%M:%S %Y")
+# one hour before sunset
+then = sunset_dtime - timedelta(hours = 1)
+
+flag = False
+while flag:
+    now = datetime.now()
+    print "time before 1 hour before sunset: " +  str(then - now)
+    sys.stdout.flush()
+    
+    if  now < then:
+        time.sleep(10)
+    else:
+        flag = False
+        
+print "Almost time for sunset!"
+#exit()
 
 #Reset hub
 # sudo ./usbreset /dev/bus/usb/008/004
@@ -31,7 +67,7 @@ camcall.append('--filename')
 datestr = time.strftime('%2y-%3j') #year followed by day in year
 daystr =  time.strftime('%2y-%2m-%d') #year followed by  mo, day
 
-dirpath = "/home/jtf/cam/jpg/" + datestr
+dirpath = "/home/pi/cam/jpg/" + datestr
 
 
 print "starting cam script"
@@ -57,6 +93,6 @@ while(keepgoing):
         if fsize < 900000: # it's dark out
             keepgoing = False
             
-movcall = ['/home/jtf/cam/movscript.py', dirpath]
-print ' '.join(movcall)
-subprocess.call(movcall)
+#movcall = ['/home/jtf/cam/movscript.py', dirpath]
+#print ' '.join(movcall)
+#subprocess.call(movcall)
