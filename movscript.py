@@ -18,13 +18,17 @@ print "froot " + froot
 ffcall = ['ffmpeg']
 ffcall.append('-r')
 ffcall.append('18')
-ffcall.append('-qscale')
-ffcall.append('2')
 # doc: http://ffmpeg.org/ffmpeg.html#crop
 
 # this crops out Sutro
 #ffcall.append('-vf')
 #ffcall.append('crop=800:600:650:400')
+
+
+#input files, of type 20160903200831.jpg
+ffcall.append('-i')
+ffcall.append(os.path.join(srcfolder, 'temp-%05d.jpg'))
+#ffcall.append(os.path.join(srcfolder, 'temp-%5d.jpg'))
 
 # this crops off bottom
 ffcall.append('-vf')
@@ -34,13 +38,17 @@ ffcall.append('crop=in_w:1100:0:0')
 #x:y:w:h:rx:ry:edge:blocksize:contrast:search:filename
 #ffcall.append('-vf')
 #ffcall.append('deshake=-1:-1:-1:-1:16:16:0:8:100:1:shake.log,crop=800:600:650:400')
+#ffcall.append('deshake=-1:-1:-1:-1:16:16:0:8:100:1:shake.log')
 
-#input files
-ffcall.append('-i')
-ffcall.append(os.path.join(srcfolder, 'temp-%5d.jpg'))
+# output quality
+#ffcall.append('-q:v')
+#ffcall.append('2')
+
+ffcall.append('-an')
+
 
 #output file
-vidfile = os.path.join('/home/jtf/cam/vid/',froot+'.mp4')
+vidfile = os.path.join('.',froot+'.mp4')
 ffcall.append(vidfile)
 #ffcall.append('-s')
 #ffcall.append('800x600')
@@ -48,6 +56,7 @@ ffcall.append(vidfile)
 
 rmcall = ["rm"]
 rmcall.append('-f')
+rmcall.append('-v')
 rmcall.append(os.path.join(srcfolder,'temp*.jpg'))
 
 #camcall = 'ls'
@@ -68,17 +77,17 @@ if True: # copy temp files
     for jfile in os.listdir(srcfolder):
         if fnmatch.fnmatch(jfile, '*.jpg'):
             fnames.append(jfile)
-
+            
     fnames.sort()
 
     for i, f in enumerate(fnames):
-        mvcall = ['cp']
-        mvcall.append('-l') # make a link so we don't pound the disk
-        mvcall.append(os.path.join(srcfolder,f))
-        mvcall.append(os.path.join(srcfolder, "temp-%05d.jpg" % i))
-        print ' '.join(mvcall)
-        sys.stdout.flush()
-        subprocess.call(mvcall)
+         mvcall = ['cp']
+         mvcall.append('-l') # make a link so we don't pound the disk
+         mvcall.append(os.path.join(srcfolder,f))
+         mvcall.append(os.path.join(srcfolder, "temp-%05d.jpg" % i))
+         print ' '.join(mvcall)
+         sys.stdout.flush()
+         subprocess.call(mvcall)
 
 # make the movie from the temp files
 print ' '.join(ffcall)
@@ -87,7 +96,7 @@ subprocess.call(ffcall,stdout=sys.stdout,stderr=subprocess.STDOUT)
 # and upload it
 ftpcall = ['/home/jtf/cam/ftpscript.py',vidfile]
 print ' '.join(ftpcall)
-subprocess.call(ftpcall,stdout=sys.stdout,stderr=subprocess.STDOUT)
+#subprocess.call(ftpcall,stdout=sys.stdout,stderr=subprocess.STDOUT)
 
 # now remove temp files
 print ' '.join(rmcall)

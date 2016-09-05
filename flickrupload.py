@@ -4,8 +4,13 @@ import xml
 import sys
 import os
 
-foo = subprocess.check_output(['cat', 'flickr_cred.txt'])
-user, api_key, api_secret = foo.split()
+# file to upload
+fname = sys.argv[1]
+
+# get flickr credentials from file
+creds = subprocess.check_output(['cat', 'flickr_cred.txt'])
+user, api_key, api_secret = creds.split()
+
 
 
 flickr = f.FlickrAPI(api_key, api_secret)
@@ -14,7 +19,7 @@ if not token:
         raw_input("Press ENTER after you authorized this program")
 flickr.get_token_part_two((token, frob))
 
-result = flickr.upload('test.jpg', title='test_upload', tags='sunset timelapse "San Francisco"') 
+result = flickr.upload(fname, title=fname, tags='sunset timelapse "San Francisco"') 
 xml.etree.ElementTree.dump(result)
 
 exit()
