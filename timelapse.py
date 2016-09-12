@@ -10,58 +10,31 @@ setup = []
 setup.append("gphoto2 --set-config capture=on".split())
 setup.append("gphoto2 --set-config focuslock=on".split())
 setup.append("gphoto2 --set-config assistlight=0".split())
-# 1024 x 768?
+# 0:3264x2448 1:2592x1944 2:2048x1536 3:1600x1200 4:640x480
 setup.append("gphoto2 --set-config imagesize=3".split())
 # save to SRAM
 setup.append("gphoto2 --set-config capturetarget=0".split())
 setup.append("gphoto2 --set-config zoom=8".split())
 
-duration_hrs = 0.25
-hrs_b4_sunset = 1.5
-hrs_before_sunset = 8.01
+duration_hrs = 1.5
+hrs_before_sun = 1.0
 frame_delay_s = 2 
 # destination directory: raw files in subdir here named by date
 dest_dir = "/home/pi/cam/jpg/" 
-
-
+wait_for_sun = False
+sunrise = False
 nframes = int(duration_hrs*3600/frame_delay_s)
 
-# first wait for hrs_before_sunset.
-#Calculate sunset
-import ephem
-from datetime import datetime, timedelta
-import time
-o=ephem.Observer()
-o.lat='37.7749'
-o.long='-122.4194'
-s=ephem.Sun()
-#s=ephem.Moon()
-s.compute()
-print "next sunrise"
-print ephem.localtime(o.next_rising(s)).ctime()
+if wait_for_sun:
+     # first wait for hrs_before_sun.
+     wait_call = ["/home/pi/gith/camscript/wait_for.py", str(hrs_before_sun)]
+     if len(sys.argv) > 1:
+          sunrise = True
+          wait_call.append("sunrise")
+          duration_hrs = 1
+          hrs_before_sun = 0.25
 
-
-# convert sunset time to datetime
-sunset_ctime = ephem.localtime(o.next_setting(s)).ctime()
-sunset_dtime = datetime.strptime(sunset_ctime, "%a %b %d %H:%M:%S %Y")
-# one hour before sunset
-then = sunset_dtime - timedelta(hours = hrs_before_sunset)
-
-flag = True
-while flag:
-    now = datetime.now()
-    print "waiting for " + str(then) + " (remaining)" +  str(then - now)
-    sys.stdout.flush()
-    
-    if  now < then:
-        time.sleep(10)
-    else:
-        flag = False
-        
-print "Done waiting, let's go!"
-
-
-#http://www.moreno.marzolla.name/software/linux-time-lapse/
+     result = subprocess.call(wait_call)
 
 try:
      result = subprocess.check_output(['gphoto2', '--auto-detect'])
@@ -78,7 +51,10 @@ for cmd in setup:
 
 # make deistination directory
 #datestr = time.strftime('%2y-%3j') #year followed by day in year
-daystr =  time.strftime('%2y-%2m-%2d') #year followed by  mo, day
+if sunrise:
+     daystr =  time.strftime('%2y-%2m-%2d') #year followed by  mo, day
+else:
+     daystr =  time.strftime('%2y-%2m-%2d-r') #year followed by  mo, day
 dirpath = os.path.join(dest_dir,daystr)
 
 

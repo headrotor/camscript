@@ -2,7 +2,6 @@
 import sys
 import os
 import time
-import subprocess
 
 def print_usage():
     print """ Usage: python wait_for.py <hours_before> <sunrise>"""
@@ -52,7 +51,7 @@ if sunrise:
     print("wait for {:f} hours before sunrise".format(hrs_before))
 else:
      print("wait for {:f} hours before sunset".format(hrs_before))
-
+sys.stdout.flush()
     
 while flag:
     now = datetime.now()
