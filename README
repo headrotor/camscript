@@ -1,3 +1,9 @@
+
+#As of 2020 this is OBSOLETE
+Gphoto2 does not work with new Canon point-and-shoots, Python 2 is deprecated as well. 
+Blip.tv is defunct and I don't trust Flickr with new data. 
+Please see new repository at https://github.com/headrotor/cam3
+
 Code to produce timelapse videos from a camera using gphoto2 and ffmpeg.
 
 More details at http://rotormind.com/blog/2012/Mission-sunset-timelapses/
